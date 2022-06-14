@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+    0614-project-go-db-ver0.0.1.1-go:
+        build:
+            context: .
+            dockerfile: ${PWD}/Dockerfile
+        container_name: 0614-project-go-db-ver0.0.1.1-go
+        ports:
+            - "8001:8080"
+        volumes:
+            - ${PWD}/src/:/go/src
+        tty: true
+        networks:
+            0614-project-go-db-ver0.0.1.1:
+                ipv4_address: 250.250.249.10
+        logging:
+            driver: "fluentd"
+            options:
+              fluentd-address: 250.250.249.11:24223
+              tag: go.log
+              fluentd-async-connect: "true"
+
+    0614-project-go-db-ver0.0.1.1-fluent:
+        image: fluent/fluentd:latest
+        restart: always
+        container_name: 0614-project-go-db-ver0.0.1.1-fluent
+        command: >
+            /usr/bin/fluentd -c /fluentd/etc/fluent.conf -v
+        volumes:
+            - ${PWD}/fluent/conf/fluent.conf:/fluentd/etc/fluent.conf
+            - ${PWD}/fluent/log:/fluentd/log
+        ports:
+            - "24223:24224"
+            - "24223:24224/udp"
+        networks:
+            0614-project-go-db-ver0.0.1.1:
+                ipv4_address: 250.250.249.11
+
+networks:
+    0614-project-go-db-ver0.0.1.1:
+        ipam:
+            driver: default
+            config:
+                - subnet: 250.250.249.0/24
+
+
+# usage
+# cd go
+# go mod init [プロジェクト名]
+# docker-compose build
+# docker-compose run --rm 0614-project-go-db-ver0.0.1.1-go air init
+# docker-compose run --rm app go mod tidy
+
+
+# docker-compose run --rm 0614-project-go-db-ver0.0.1.1-go go mod tidy

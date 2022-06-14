@@ -1,0 +1,56 @@
+version: '3'
+
+services:
+    0614-project-go-db-ver0.0.1.2-db:
+        image: mysql:5.7
+        container_name: 0614-project-go-db-ver0.0.1.2-db
+        environment: 
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_USER: aoimaru
+            MYSQL_PASSWORD: aoimaru
+            TZ: 'Asia/Tokyo'
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci 
+        volumes:
+            - ./mysql/volume:/var/lib/mysql
+            - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+        ports:
+            - 13306:3306
+        logging:
+            driver: "fluentd"
+            options:
+              fluentd-address: 250.250.250.11:24222
+              tag: mysql.log
+              fluentd-async-connect: "true"
+        networks:
+            0614-project-go-db-ver0.0.1.2:
+                ipv4_address: 250.250.250.10
+
+    0614-project-go-db-ver0.0.1.2-fluent:
+        image: fluent/fluentd:latest
+        restart: always
+        container_name: 0614-project-go-db-ver0.0.1.2-fluent
+        command: >
+            /usr/bin/fluentd -c /fluentd/etc/fluent.conf -v
+        volumes:
+            - ${PWD}/fluent/conf/fluent.conf:/fluentd/etc/fluent.conf
+            - ${PWD}/fluent/log:/fluentd/log
+        ports:
+            - "24222:24224"
+            - "24222:24224/udp"
+        networks:
+            0614-project-go-db-ver0.0.1.2:
+                ipv4_address: 250.250.250.11
+
+networks:
+    0614-project-go-db-ver0.0.1.2:
+        ipam:
+            driver: default
+            config:
+                - subnet: 250.250.250.0/24
+
+
+# usage
+# docker-compose build
+# docker cp world-db 0614-project-go-db-ver0.0.1-db:./
+# docker exec -it 0614-project-go-db-ver0.0.1-db bash
+# root@171b4cab1477:/# mysql -u root -p < world-db/world.sql 

@@ -1,0 +1,8 @@
+2022-06-14T06:12:23+00:00	fluent.info	{"worker":0,"message":"fluentd worker is now running worker=0"}
+2022-06-14T06:32:06+00:00	fluent.debug	{"message":"fluentd main process get SIGTERM"}
+2022-06-14T06:32:06+00:00	fluent.debug	{"message":"getting start to shutdown main process"}
+2022-06-14T06:32:06+00:00	fluent.info	{"worker":0,"message":"fluentd worker is now stopping worker=0"}
+2022-06-14T06:34:52+00:00	fluent.info	{"worker":0,"message":"fluentd worker is now running worker=0"}
+2022-06-14T09:00:24+00:00	fluent.debug	{"message":"fluentd main process get SIGTERM"}
+2022-06-14T09:00:24+00:00	fluent.debug	{"message":"getting start to shutdown main process"}
+2022-06-14T09:00:25+00:00	fluent.info	{"worker":0,"message":"fluentd worker is now stopping worker=0"}
